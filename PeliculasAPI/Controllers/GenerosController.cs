@@ -52,6 +52,35 @@ namespace PeliculasAPI.Controllers
             return new CreatedAtRouteResult("obtenerGenero", new { id = generoDTO.Id }, generoDTO);
         }
 
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(int id, [FromBody] GeneroCreacionDTO generoCreacionDTO)
+        {
+            var entidad = mapper.Map<Genero>(generoCreacionDTO);
+            entidad.Id = id;
+            context.Entry(entidad).State = EntityState.Modified;
+            await context.SaveChangesAsync();
+            return NoContent();
+
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var existe = await context.Generos.AnyAsync(x=> x.Id == id);
+
+            if (!existe)
+            {
+                return NotFound();
+            }
+
+            context.Remove(new Genero() { Id = id });
+            await context.SaveChangesAsync();
+
+            return NoContent();
+
+        }
+
     }
 }
       
